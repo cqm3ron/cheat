@@ -11,6 +11,27 @@ namespace Cheat
     {
         private static readonly Random rand = new Random();
         private List<Card> cards = new List<Card>();
+        private int selectedCardCount;
+
+        public void SetSelectedCardCount(int value)
+        {
+            selectedCardCount = value;
+        }
+        public int GetSelectedCardCount()
+        {
+            return selectedCardCount;
+        }
+        public void ResetSelectedCards()
+        {
+            foreach (Card card in cards)
+            {
+                if (card.GetSelected())
+                {
+                    card.DeSelect();
+                }
+            }
+            selectedCardCount = 0;
+        }
 
         public Deck(bool fill = false)
         {

@@ -13,7 +13,7 @@ namespace Cheat
             Deck[] playerDecks = deck.Deal(2);
             //Console.ReadKey();
 
-            Display.ScrollMenu(playerDecks[0]);
+            Game.HandleTurn(playerDecks, deck);
 
             /* if all selected cards are same rank,
              * auto-fill user input for NOT cheat

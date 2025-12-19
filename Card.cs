@@ -2,7 +2,6 @@
 {
     enum Suit
     {
-        //suit (str): The suit of the card ('♠', '♥', '♦', '♣').
         heart,
         diamond,
         spade,
@@ -95,11 +94,6 @@
                 selected = false;
             }
         }
-
-        //public override string ToString()
-        //{
-        //    return Display.Card(this);
-        //}
 
         public static List<Card> GenerateDeck()
         {
