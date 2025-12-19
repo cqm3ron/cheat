@@ -2,7 +2,6 @@
 {
     internal class Display
     {
-        public static int CardsPerLine = SetCardsPerLine();
         public const int CardWidth = 11;
         public const int CardHeight = 7;
 
@@ -21,64 +20,6 @@
             }
         }
 
-        public static void ShortEmptyCard()
-        {
-            Console.Write("           ");
-            NextLine();
-            Console.Write("           ");
-            NextLine();
-            Console.Write("           ");
-            NextLine();
-            Console.Write("           ");
-            NextLine();
-            Console.Write("           ");
-            NextLine();
-            Console.Write("           ");
-            NextLine();
-            Console.Write("           ");
-            NextLine();
-            NextCard();
-            Console.ResetColor();
-        }
-        public static void ShortCard(Card card)
-        {
-            string rightRank, leftRank;
-            string rank = card.GetRank();
-            char suit = card.GetSuit();
-            bool selected = card.GetSelected();    
-
-
-            if (rank == "10")
-            {
-                rightRank = rank;
-                leftRank = rank;
-            }
-            else
-            {
-                rightRank = rank + " ";
-                leftRank = " " + rank;
-            }
-            if (selected)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-            }
-            Console.Write("           ");
-            NextLine();
-            Console.Write("┌─────────┐");
-            NextLine();
-            Console.Write($"│{leftRank}       │");
-            NextLine();
-            Console.Write($"│    {suit}    │");
-            NextLine();
-            Console.Write($"│       {rightRank}│");
-            NextLine();
-            Console.Write("└─────────┘");
-            NextLine();
-            Console.Write("           ");
-            NextLine();
-            NextCard();
-            Console.ResetColor();
-        }
         public static void Card(Card card)
         {
             string rightRank, leftRank;
@@ -101,39 +42,112 @@
                 Console.ForegroundColor = ConsoleColor.Green;
             }
             Console.Write("┌─────────┐");
-            NextLine();
+            NextLineCard();
             Console.Write($"│{leftRank}       │");
-            NextLine();
+            NextLineCard();
             Console.Write("│         │");
-            NextLine();
+            NextLineCard();
             Console.Write($"│    {suit}    │");
-            NextLine();
+            NextLineCard();
             Console.Write("│         │");
-            NextLine();
+            NextLineCard();
             Console.Write($"│       {rightRank}│");
-            NextLine();
+            NextLineCard();
             Console.Write("└─────────┘");
-            NextLine();
-            NextCard();
+            NextLineCard();
+            Console.SetCursorPosition(Console.GetCursorPosition().Left + CardWidth, Console.GetCursorPosition().Top - CardHeight);
             Console.ResetColor();
         }
 
-        private static void NextLine()
+        public static void ShortCard(string side, Card card)
+        {
+            string rightRank, leftRank;
+            string rank = card.GetRank();
+            char suit = card.GetSuit();
+            bool selected = card.GetSelected();
+            if (rank == "10")
+            {
+                rightRank = rank;
+                leftRank = rank;
+            }
+            else
+            {
+                rightRank = rank + " ";
+                leftRank = " " + rank;
+            }
+            if (selected)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+            }
+
+            if (side == "left")
+            {
+                Console.WriteLine();
+                Console.Write("┌─────");
+                NextLineSmallCard();
+                Console.Write($"│{leftRank}   ");
+                NextLineSmallCard();
+                Console.Write($"│    {suit}");
+                NextLineSmallCard();
+                Console.Write("│     ");
+                NextLineSmallCard();
+                Console.Write("└─────");
+                Console.SetCursorPosition(Console.GetCursorPosition().Left, Console.GetCursorPosition().Top - 5);
+
+            }
+            else
+            {
+                Console.Write("─────┐");
+                NextLineSmallCard();
+                Console.Write("     │");
+                NextLineSmallCard();
+                Console.Write($"{suit}    │");
+                NextLineSmallCard();
+                Console.Write($"   {rightRank}│");
+                NextLineSmallCard();
+                Console.Write("─────┘");
+            }
+            Console.ResetColor();
+        }
+
+        public static void ShortEmptyCard(string side)
+        {
+            if (side == "left")
+            {
+                Console.WriteLine();
+                Console.Write("      ");
+                NextLineSmallCard();
+                Console.Write("      ");
+                NextLineSmallCard();
+                Console.Write("      ");
+                NextLineSmallCard();
+                Console.Write("      ");
+                NextLineSmallCard();
+                Console.Write("      ");
+                Console.SetCursorPosition(Console.GetCursorPosition().Left, Console.GetCursorPosition().Top - 5);
+            }
+            else
+            {
+                Console.Write("      ");
+                NextLineSmallCard();
+                Console.Write("      ");
+                NextLineSmallCard();
+                Console.Write("      ");
+                NextLineSmallCard();
+                Console.Write("      ");
+                NextLineSmallCard();
+                Console.Write("      ");
+            }
+        }
+
+        private static void NextLineSmallCard()
+        {
+            Console.SetCursorPosition(Console.GetCursorPosition().Left - 6, Console.GetCursorPosition().Top + 1);
+        }
+
+        private static void NextLineCard()
         {
             Console.SetCursorPosition(Console.GetCursorPosition().Left - CardWidth, Console.GetCursorPosition().Top + 1);
-        }
-
-        private static void NextCard()
-        {
-            Console.SetCursorPosition(Console.GetCursorPosition().Left + CardWidth, Console.GetCursorPosition().Top - CardHeight);
-        }
-
-        private static int SetCardsPerLine()
-        {
-            int windowWidth = Console.WindowWidth;
-            int windowHeight = Console.WindowHeight;
-            int cardsPerLine = windowWidth / CardWidth;
-            return cardsPerLine;
         }
 
         public static void ScrollMenu(Deck deck)
@@ -147,7 +161,7 @@
                 Console.Clear();
                 Console.SetCursorPosition(0, 0);
                 BigCard(deck, current);
-                Console.SetCursorPosition(Console.GetCursorPosition().Left + 7, Console.GetCursorPosition().Top);
+                Console.SetCursorPosition(Console.GetCursorPosition().Left + 2, Console.GetCursorPosition().Top - 5);
                 DisplaySelectedCards(deck);
 
                 inputKey = Console.ReadKey(true);
@@ -199,26 +213,28 @@
             {
                nextCard = deck.GetCard(card + 1);
             }
-            if (previousCard != null)
+
+            if (previousCard != null) // attempt to display the previous card
             {
-                Display.ShortCard(previousCard);
+                Display.ShortCard("left", previousCard);
             }
             else
             {
-                Display.ShortEmptyCard();
+                Display.ShortEmptyCard("left");
             }
-            if (nextCard != null)
+
+            Display.Card(middleCard); // display the current card
+
+            if (nextCard != null) // attempt to display the next card
             {
-                Console.SetCursorPosition(Console.GetCursorPosition().Left + (CardWidth / 2) - 4, Console.GetCursorPosition().Top);
-                Display.ShortCard(nextCard);
+                Console.SetCursorPosition(Console.GetCursorPosition().Left + (CardWidth / 2) - 5, Console.GetCursorPosition().Top + 1);
+                Display.ShortCard("right", nextCard);
             }
             else
             {
-                Console.SetCursorPosition(Console.GetCursorPosition().Left + (CardWidth / 2) - 4, Console.GetCursorPosition().Top);
-                Display.ShortEmptyCard();
+                Console.SetCursorPosition(Console.GetCursorPosition().Left + (CardWidth / 2) - 5, Console.GetCursorPosition().Top + 1);
+                Display.ShortEmptyCard("right");
             }
-            Console.SetCursorPosition(Console.GetCursorPosition().Left - (2 * CardWidth) + (CardWidth / 2), Console.GetCursorPosition().Top);
-            Display.Card(middleCard);
         }
 
         public static void DisplaySelectedCards(Deck deck)
